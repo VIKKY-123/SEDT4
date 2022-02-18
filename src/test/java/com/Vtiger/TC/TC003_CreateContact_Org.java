@@ -1,38 +1,40 @@
 package com.Vtiger.TC;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.time.Duration;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.Select;
 
-import com.erp.Vtiger.IAutoConstants;
+import com.erp.Vtiger.ExcelUtil;
+import com.erp.Vtiger.FileLib;
+import com.erp.Vtiger.JavaUtil;
+import com.erp.Vtiger.WebDriverUility;
+import com.erp.Vtiger.ObjectRepo.ContactsPage;
+import com.erp.Vtiger.ObjectRepo.Create_Contacts;
+import com.erp.Vtiger.ObjectRepo.Homepage;
+import com.erp.Vtiger.ObjectRepo.LoginPage;
+import com.erp.Vtiger.ObjectRepo.OrganizationPopup;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class TC003_CreateContact_Org {
 
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static void main(String[] args) throws Throwable {
 
 		WebDriverManager.chromedriver().setup();
 
 
 		WebDriver driver;
-		FileInputStream fis = new FileInputStream(IAutoConstants.pro_path);
-		Properties pro = new Properties();
-		pro.load(fis);
-		String BROWSER = pro.getProperty("browser");
+
+		FileLib fil=new FileLib();
+
+		String BROWSER =fil.readpropertieData("browser");
 
 		if(BROWSER.equalsIgnoreCase("chrome")) {
 			driver= new ChromeDriver();
@@ -54,78 +56,110 @@ public class TC003_CreateContact_Org {
 
 
 
-		driver.get(pro.getProperty("URL"));
+		driver.get(fil.readpropertieData("URL"));
 		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+		WebDriverUility webutil=new WebDriverUility();
 
-		driver.findElement(By.name("user_name")).sendKeys(pro.getProperty("un"));
-		driver.findElement(By.name("user_password")).sendKeys(pro.getProperty("pwd"));
-		driver.findElement(By.id("submitButton")).click();
+		webutil.pageloadedwait(driver);
+
+		LoginPage loginpage=new LoginPage(driver);
+
+
+		loginpage.getUsername().sendKeys(fil.readpropertieData("un"));
+		loginpage.getPassword().sendKeys(fil.readpropertieData("pwd"));
+		loginpage.getLoginbtn().click();
 
 		Thread.sleep(3000);
 
+		Homepage homepage= new Homepage(driver);
 
-		driver.findElement(By.xpath("//a[text()='Contacts']")).click();
+		homepage.getContactlink().click();
+		ContactsPage contactspage=new ContactsPage(driver);
+		contactspage.getCreate_contact().click();
 
-		driver.findElement(By.xpath("//img[@title=\"Create Contact...\"]")).click();
 
-		Select sel = new Select(driver.findElement(By.xpath("//select[@name=\"salutationtype\"]")));
-		sel.selectByVisibleText("Mr.");
-		
-		FileInputStream fisexl=new FileInputStream(IAutoConstants.ex_path);
-		
-		String contatname=WorkbookFactory.create(fisexl).getSheet("sheet2").getRow(1).getCell(0).getStringCellValue();
-		
-		System.out.println(contatname);
-		FileInputStream fisexl2=new FileInputStream(IAutoConstants.ex_path);
-		
-		String lastname=WorkbookFactory.create(fisexl2).getSheet("sheet2").getRow(1).getCell(1).getStringCellValue();
-		
-		
-		driver.findElement(By.xpath("//input[@name=\"firstname\"]")).sendKeys(contatname);
-		driver.findElement(By.xpath("//input[@name=\"lastname\"]")).sendKeys(lastname);
+		Create_Contacts createcontacts=new Create_Contacts(driver);
+		WebElement addDD = createcontacts.getSalutationDD();
 
-		driver.findElement(By.xpath("//input[@name=\"account_name\"]/../img")).click();
+		webutil.selectfromDD(addDD, "Mr." );
+
+
+		JavaUtil jv=new JavaUtil();
+		String firstname = jv.fakefirstName();
+		String lastname = jv.fakelastName();
+
+		createcontacts.getFirstnametext().sendKeys(firstname);
+		createcontacts.getLastnametext().sendKeys(lastname);
+		createcontacts.getAccountnamebtn().click();	
+
 
 		Thread.sleep(5000);
 
+
+
+		//
 		Set<String> wdw = driver.getWindowHandles();
+
+		//	for(String singlewin:wdw) {
+		//		
+		//		String title = driver.switchTo().window(singlewin).getTitle();
+		//		
+		//		System.out.println(title);
+		//		
+		//	
+		//	
+		//	}
 		Iterator<String> itr = wdw.iterator();
 		String parent = itr.next();
 		String child = itr.next();
 		driver.switchTo().window(child);
 
-		driver.findElement(By.xpath("//input[@id=\"search_txt\"]")).sendKeys(contatname);
+		OrganizationPopup organizationpopup=new OrganizationPopup(driver);
 
-		Select selchildDD = new Select(driver.findElement(By.xpath("//select[@name=\"search_field\"]")));
-		selchildDD.selectByVisibleText("Organization Name");
 
-		driver.findElement(By.xpath("//input[@name=\"search\"]")).click();
 
-		driver.findElement(By.xpath("//a[@id='2']")).click();
+		organizationpopup.getSearch_text().sendKeys(firstname);
+		WebElement DDsearchfield = organizationpopup.getSearch_fieldDD();
+
+		webutil.selectfromDD(DDsearchfield, "Organization Name");
+
+
+		organizationpopup.getSearchbtn();
+
+		organizationpopup.getContact_optin().click();
+
 		driver.switchTo().window(parent);
 
-
 		Thread.sleep(3000);
-		driver.findElement(By.xpath("//input[@title=\"Save [Alt+S]\"]")).click();
+
+		createcontacts.getSavebtn().click();
+
 
 		Thread.sleep(5000);
 
+		homepage.getContactlink().click();
 
-		driver.findElement(By.xpath("//a[text()='Contacts']")).click();
+		contactspage.getTxtbox().sendKeys(firstname);
+		WebElement addsearchfield = contactspage.getSearchfield();
+
+		webutil.selectfromDD(addsearchfield, "First Name");
+
+		contactspage.getSubmitbtn().click();
+
+		ExcelUtil excelutil=new ExcelUtil();
+		String orgname = excelutil.getExcelData("sheet1", 2, 0);
 
 
-		driver.findElement(By.xpath("//input[@class=\"txtBox\"]")).sendKeys(contatname);
-
-		Select selDD = new Select(driver.findElement(By.xpath("//select[@id=\"bas_searchfield\"]")));
-
-		selDD.selectByVisibleText("First Name");
 
 
-		driver.findElement(By.xpath("//input[@name=\"submit\"]")).click();
 
-		FileInputStream fisexl1=new FileInputStream(IAutoConstants.ex_path);
-		String orgname=WorkbookFactory.create(fisexl1).getSheet("sheet1").getRow(2).getCell(0).getStringCellValue();
+
+
+
+		//String orgname = companyname+jv.generaterandomNumber();
+
+
+
 
 		String value = driver.findElement(By.xpath("//a[@title=\"Organizations\"]")).getText();
 
@@ -139,19 +173,19 @@ public class TC003_CreateContact_Org {
 			System.out.println("Testcase is fail");
 		}
 
-		WebElement sp = driver.findElement(By.xpath("//img[@src=\"themes/softed/images/user.PNG\"]"));
+		WebElement sp = homepage.getSingupimg();
+		webutil.movetoElement(driver, sp);
 
-		Actions mv=new Actions(driver);
-		mv.moveToElement(sp).build().perform();
+		homepage.getSingupbtn().click();
 
-		driver.findElement(By.xpath("//a[text()='Sign Out']")).click();
+
 
 		Thread.sleep(10000);
 
 
 		driver.close();
-
-
+		
+	
 
 
 

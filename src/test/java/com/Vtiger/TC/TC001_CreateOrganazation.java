@@ -1,10 +1,7 @@
 package com.Vtiger.TC;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.Duration;
-import java.util.Properties;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,79 +9,86 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.Select;
 
-import com.erp.Vtiger.IAutoConstants;
+import com.erp.Vtiger.FileLib;
+import com.erp.Vtiger.JavaUtil;
+import com.erp.Vtiger.WebDriverUility;
+import com.erp.Vtiger.ObjectRepo.Create_Org_page;
+import com.erp.Vtiger.ObjectRepo.Homepage;
+import com.erp.Vtiger.ObjectRepo.LoginPage;
+import com.erp.Vtiger.ObjectRepo.Organizationspage;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class TC001_CreateOrganazation {
-	
+
 	public static void main(String args []) throws InterruptedException, IOException {
-WebDriver driver;
-		
+		WebDriver driver;
+
 		WebDriverManager.chromedriver().setup();
-		
-		FileInputStream fis=new FileInputStream(IAutoConstants.pro_path);
-		Properties pro=new Properties();
-		pro.load(fis);
-		
-		String BROWSER = pro.getProperty("browser");
-		
+
+		FileLib fil=new FileLib();
+
+		String BROWSER = fil.readpropertieData("browser");
+
 		if(BROWSER.equalsIgnoreCase("chrome")) {
-			
+
 			driver = new ChromeDriver();
 		}
 		else if(BROWSER.equalsIgnoreCase("firefox")) {
-			
+
 			driver = new FirefoxDriver();
 		}
-		
+
 		else if(BROWSER.equalsIgnoreCase("edge")) {
 			driver = new EdgeDriver();
 		}
 		else {
 			driver = new FirefoxDriver();
-			
+
 		}
-		
-		
-		
-		 
-		driver.get(pro.getProperty("URL"));
+
+		driver.get(fil.readpropertieData("URL"));
 		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-		
-		driver.findElement(By.name("user_name")).sendKeys(pro.getProperty("un"));
-		driver.findElement(By.name("user_password")).sendKeys(pro.getProperty("pwd"));
-		driver.findElement(By.id("submitButton")).click();
-		
-		driver.findElement(By.xpath("//a[text()=\"Organizations\"]")).click();
-		driver.findElement(By.xpath("//img[@alt=\"Create Organization...\"]")).click();
+
+		WebDriverUility webutil=new WebDriverUility();
+		webutil.pageloadedwait(driver);
+
+		LoginPage loginpage = new LoginPage(driver);
+
+		loginpage.getUsername().sendKeys(fil.readpropertieData("un"));
+		loginpage.getPassword().sendKeys(fil.readpropertieData("pwd"));
+		loginpage.getLoginbtn().click();
+
+		Homepage homepage=new Homepage(driver);
 		Thread.sleep(3000);
-		
-		FileInputStream fisexl=new FileInputStream(IAutoConstants.ex_path);
-		String orgname=WorkbookFactory.create(fisexl).getSheet("sheet1").getRow(2).getCell(0).getStringCellValue();
-		
-		
-		driver.findElement(By.xpath("//input[@name=\"accountname\"]")).sendKeys(orgname);
-		driver.findElement(By.xpath("//input[@title=\"Save [Alt+S]\"]")).click();
+		homepage.getOrgalink().click();
+
+		Organizationspage organizationspage = new Organizationspage(driver);
+
+		organizationspage.getCreateorgimg().click();
+
 		Thread.sleep(3000);
-		driver.findElement(By.xpath("//a[text()=\"Organizations\"]")).click();
+
+		JavaUtil jv=new JavaUtil();
+		String orgname = jv.fakecompanyName();
+
+		Create_Org_page create_org_page=new Create_Org_page(driver);
+		create_org_page.getOrgtextfield().sendKeys(orgname);
+		create_org_page.getOrg_save_btn().click();
+
 		Thread.sleep(3000);
-		driver.findElement(By.xpath("//input[@class=\"txtBox\"]")).sendKeys(orgname);
-		
-		Select sel=new Select(driver.findElement(By.xpath("//select[@name=\"search_field\"]")));
-		
-		sel.selectByVisibleText("Organization Name");
-		
-		driver.findElement(By.xpath("//input[@name=\"submit\"]")).click();
-		
-		//driver.findElement(By.xpath("//a[test()='VIKKY']")
+		homepage.getOrgalink().click();
+
+		Thread.sleep(3000);
+		organizationspage.getOrg_serach_field().sendKeys(orgname);
+		WebElement element = organizationspage.getOrg_serach_field();
+		webutil.selectfromDD(element, "Organization Name");
+
+		organizationspage.getSubmitbtn().click();
 		String value = driver.findElement(By.xpath("//a[@title=\"Organizations\"]")).getText();
-		
 		System.out.println(value);
-		
+
 		if(value.equalsIgnoreCase(orgname))
 		{
 			System.out.println("testcase is pass");
@@ -92,27 +96,24 @@ WebDriver driver;
 		else {
 			System.out.println("Testcase is fail");
 		}
-		
-		WebElement sp = driver.findElement(By.xpath("//img[@src=\"themes/softed/images/user.PNG\"]"));
-		
+		WebElement sp = homepage.getSingupimg();
 		Actions mv=new Actions(driver);
 		mv.moveToElement(sp).build().perform();
-		
-		driver.findElement(By.xpath("//a[text()='Sign Out']")).click();
-		
+		homepage.getSingupbtn().click();
+
+
+
 		Thread.sleep(10000);
-		
-		
 		driver.close();
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
+
+
 	}
 
 }
