@@ -12,7 +12,7 @@ import com.erp.Vtiger.ObjectRepo.Create_Org_page;
 import com.erp.Vtiger.ObjectRepo.Homepage;
 import com.erp.Vtiger.ObjectRepo.Organizationspage;
 
-public class TC002_CreateOrag_DD extends Base_Class {
+public class TC002_CreateOrag_DD_Test extends Base_Class {
 	@Test(groups={"regration"})
 	public  void createorg_DD() throws InterruptedException, IOException {
 

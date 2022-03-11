@@ -38,14 +38,14 @@ public class Base_Class {
 //		Reporter.log("===execute before test");
 //	}
 	
-	@Parameters("BROWSER")
+	//@Parameters("BROWSER")
 	@BeforeClass(groups= {"smoke","regretion"})
-	public void Open_Browser( String BROWSER) throws IOException {
+	public void Open_Browser( ) throws IOException {
 
 		WebDriverManager.chromedriver().setup();
 		WebDriverManager.firefoxdriver().setup();
 
-		//String BROWSER = fil.readpropertieData("browser");
+		String BROWSER = fil.readpropertieData("browser");
 
 		if(BROWSER.equalsIgnoreCase("chrome")) {
 
