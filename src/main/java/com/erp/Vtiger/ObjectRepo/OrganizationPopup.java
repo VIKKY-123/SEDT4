@@ -24,7 +24,7 @@ public class OrganizationPopup {
 		return contact_optin;
 	}
 	@FindBy(xpath="//input[@name=\"search\"]") private WebElement searchbtn;
-	@FindBy(xpath="//a[@id='2']\"") private WebElement contact_optin;
+	@FindBy(xpath="//a[text()='ABC_PARK123']") private WebElement contact_optin;
 	
 	public OrganizationPopup(WebDriver driver) {
 		this.driver=driver;

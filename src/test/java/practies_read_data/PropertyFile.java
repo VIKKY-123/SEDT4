@@ -1,7 +1,6 @@
 package practies_read_data;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Properties;
 
 public class PropertyFile {

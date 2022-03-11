@@ -8,9 +8,17 @@ import org.openqa.selenium.support.PageFactory;
 public class Organizationspage {
 	WebDriver driver; 
 	@FindBy(xpath="//img[@alt=\"Create Organization...\"]") private WebElement createorgimg;
-	@FindBy(xpath="//input[@class=\"txtBox\"]") private WebElement org_serach_field;
+	@FindBy(xpath="//select[@id='bas_searchfield']") private WebElement org_serach_field;
 	@FindBy(xpath="//input[@name=\"submit\"]") private WebElement submitbtn;
 	@FindBy(xpath="//select[@name=\"search_field\"]") private WebElement orgsearchfield;
+	@FindBy(xpath="//input[@name=\"search_text\"]") private WebElement Search_for;
+	@FindBy(xpath="//a[@title=\"Organizations\"]") private WebElement ORGTitle;
+	public WebElement getORGTitle() {
+		return ORGTitle;
+	}
+	public WebElement getSearch_for() {
+		return Search_for;
+	}
 	public WebElement getCreateorgimg() {
 		return createorgimg;
 	}
@@ -23,10 +31,11 @@ public class Organizationspage {
 	public WebElement getOrgsearchfield() {
 		return orgsearchfield;
 	}
-public Organizationspage(WebDriver driver) {
-	
-	this.driver=driver;
-	
-	PageFactory.initElements(driver, this);
+	public Organizationspage(WebDriver driver) {
+
+		this.driver=driver;
+
+		PageFactory.initElements(driver, this);
+	}
 }
-}
+//input[@name="search_text"]

@@ -107,6 +107,35 @@ public class WebDriverUility {
 	driver.switchTo().frame(element);	
 	}
 	
+	/**
+	 *  this method is used to handle for accepting the alert pop up
+	 * @param driver
+	 */
+	public void alertaccept(WebDriver driver) {
+		
+		driver.switchTo().alert().accept();
+		
+	
+	}
+	/**
+	 * this method is used to handle for dismissing the alert pop up
+	 * @param driver
+	 */
+	
+	public void alertdismiss(WebDriver driver) {
+		driver.switchTo().alert().dismiss();
+	}
+	
+	/**
+	 * this method is used to the get the text from the alert pop up
+	 * @param driver
+	 * @return 
+	 */
+	public String getalertText(WebDriver driver) {
+		return driver.switchTo().alert().getText();
+		
+		
+	}
 	
 	
 

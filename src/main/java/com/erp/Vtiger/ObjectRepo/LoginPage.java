@@ -12,7 +12,7 @@ public class LoginPage {
 	}
 	public WebElement getPassword() {
 		return password;
-	}
+	} 
 	public WebElement getLoginbtn() {
 		return loginbtn;
 	}
