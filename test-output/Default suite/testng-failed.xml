@@ -3,17 +3,11 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="com.Vtiger.TC.TC002_CreateOrag_DD_Test">
+      <class name="practies_TestNG_methods.Att">
         <methods>
-          <include name="connection_DB"/>
-          <include name="Close_Browser"/>
-          <include name="Open_Browser"/>
-          <include name="disconnectDBconnection"/>
-          <include name="page_logout"/>
-          <include name="login_page"/>
-          <include name="createorg_DD"/>
+          <include name="smarthwatches"/>
         </methods>
-      </class> <!-- com.Vtiger.TC.TC002_CreateOrag_DD_Test -->
+      </class> <!-- practies_TestNG_methods.Att -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

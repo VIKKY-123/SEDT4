@@ -14,7 +14,7 @@ import com.erp.Vtiger.ObjectRepo.Organizationspage;
 
 public class TC001_CreateOrganazation_Test extends Base_Class {
 	
-	@Test(groups= {"regression"})
+	@Test( groups= {"regression"})
 
 	public void Create_organization_Test() throws IOException, InterruptedException {
 			
@@ -54,8 +54,10 @@ public class TC001_CreateOrganazation_Test extends Base_Class {
 
 	}
 	
-	@Test(groups= {"smoke"})
+	@Test(priority=0 ,groups= {"smoke"})
 	public void create_organization_Test() throws InterruptedException {
+		
+		System.out.println("first execution");
 		
 		Homepage homepage=new Homepage(driver);
 		
